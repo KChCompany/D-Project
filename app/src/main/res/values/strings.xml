@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">D-Project</string>
+    <string name="app_name">Geo Messenger</string>
     <string name="title_activity_maps">Map</string>
+    <string name="connect_to_chat">Присоедениться к чату</string>
 </resources>

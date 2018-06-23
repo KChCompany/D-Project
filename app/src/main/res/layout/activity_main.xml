@@ -5,29 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:layout_editor_absoluteY="81dp">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/signInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonStart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintStart_toEndOf="@+id/editText"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@android:color/white"
         android:ems="10"
         android:inputType="textCapWords"
@@ -35,69 +33,47 @@
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/signInButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/signInButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/signOutButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="111dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@android:color/white"
         android:onClick="onClickSignOutButton"
         android:text="Sign out"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/signInButton"
-        app:layout_constraintEnd_toEndOf="@+id/signInButton"
-        app:layout_constraintHorizontal_bias="0.287"
-        app:layout_constraintStart_toStartOf="@+id/signInButton"
-        app:layout_constraintTop_toTopOf="@+id/signInButton"
-        app:layout_constraintVertical_bias="0.725" />
-
-    <Button
-        android:id="@+id/buttonStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@android:color/white"
-        android:enabled="false"
-        android:text="Начать общение"
-        android:textColor="@color/colorPrimary"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInButton" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:indeterminateTint="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/textGeoPosition"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonStart" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textGeoPosition"
         android:layout_width="wrap_content"
         android:layout_height="21dp"
-        android:layout_marginTop="8dp"
-        android:text="Получение геопозиции..."
+        android:layout_marginBottom="8dp"
+        android:text="Получение данных о геопозиции..."
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageReady"
@@ -115,25 +91,34 @@
         app:srcCompat="@drawable/ic_ready" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Test Geo"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@android:color/white"
+        android:enabled="false"
         android:onClick="onClickMap"
+        android:text="Присоедениться"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonCreateChat" />
 
     <Button
         android:id="@+id/buttonCreateChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="51dp"
         android:layout_marginTop="8dp"
+        android:backgroundTint="@android:color/white"
+        android:enabled="false"
         android:onClick="onCreateChatClick"
         android:text="Создать чат"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonMap"
+        app:layout_constraintEnd_toEndOf="@+id/buttonMap"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/buttonMap"
+        app:layout_constraintTop_toBottomOf="@+id/editText"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 </android.support.constraint.ConstraintLayout>

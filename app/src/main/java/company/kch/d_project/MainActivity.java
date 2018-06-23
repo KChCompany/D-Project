@@ -1,5 +1,6 @@
 package company.kch.d_project;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -40,7 +41,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import company.kch.d_project.adapter.MessageAdapter;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     String userName = null;
 
-    Button buttonStart;
+    Button buttonCreate, buttonMap;
 
     //location
     private LocationManager locationManager;
@@ -82,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
+
         //location
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         textGeoPosition = findViewById(R.id.textGeoPosition);
@@ -94,9 +98,10 @@ public class MainActivity extends AppCompatActivity {
         signOutButton = findViewById(R.id.signOutButton);
         editTextGoogleName = findViewById(R.id.editText);
 
-        reference = FirebaseDatabase.getInstance().getReference("chats");
 
-        final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+
+        final GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestScopes(new Scope(Scopes.PLUS_ME))
                 .requestEmail()
@@ -108,6 +113,15 @@ public class MainActivity extends AppCompatActivity {
                 signIn();
             }
         });
+
+
+
+        reference = FirebaseDatabase.getInstance().getReference("chats");
+
+
+        buttonCreate = findViewById(R.id.buttonCreateChat);
+        buttonMap = findViewById(R.id.buttonMap);
+
         final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Users");
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -125,7 +139,8 @@ public class MainActivity extends AppCompatActivity {
                             editTextGoogleName.setHint(dataSnapshot.getValue(String.class));
                             userName = dataSnapshot.getValue(String.class);
                             if (locationNow != null) {
-                                buttonStart.setEnabled(true);
+                                buttonCreate.setEnabled(true);
+                                buttonMap.setEnabled(true);
                             }
                         }
 
@@ -154,26 +169,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonStart = findViewById(R.id.buttonStart);
-        buttonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-                intent.putExtra(USER_NAME, userName);
-                intent.putExtra(LATITUD, locationNow.getLatitude());
-                intent.putExtra(LONGITUDE, locationNow.getLongitude());
-                startActivity(intent);
-            }
-        });
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
         mAuth.addAuthStateListener(mAuthListener);
     }
 
@@ -214,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
 
-                        // ...
                     }
                 });
     }
@@ -234,7 +234,8 @@ public class MainActivity extends AppCompatActivity {
         signOutButton.setVisibility(View.INVISIBLE);
         userName = null;
         editTextGoogleName.setVisibility(View.INVISIBLE);
-        buttonStart.setEnabled(false);
+        buttonCreate.setEnabled(false);
+        buttonMap.setEnabled(false);
     }
 
     @Override
@@ -255,23 +256,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private LocationListener locationListener = new LocationListener() {
-
         @Override
         public void onLocationChanged(Location location) {
             showLocation(location);
         }
-
         @Override
         public void onProviderDisabled(String provider) {
 
         }
-
         @SuppressLint("MissingPermission")
         @Override
         public void onProviderEnabled(String provider) {
             showLocation(locationManager.getLastKnownLocation(provider));
         }
-
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
@@ -280,13 +277,15 @@ public class MainActivity extends AppCompatActivity {
     private void showLocation(Location location) {
         if (location == null)
             return;
-        if (location.getProvider().equals(LocationManager.GPS_PROVIDER) || location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
+        if (location.getProvider().equals(LocationManager.GPS_PROVIDER)
+                || location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
             textGeoPosition.setText(formatLocation(location));
             locationNow = new Location(location);
             progressBar.setVisibility(View.INVISIBLE);
             imageView.setVisibility(View.VISIBLE);
             if (mAuth.getUid() != null) {
-                buttonStart.setEnabled(true);
+                buttonCreate.setEnabled(true);
+                buttonMap.setEnabled(true);
             }
         }
     }
@@ -299,12 +298,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickMap (View view) {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        intent.putExtra("Lat", locationNow.getLatitude());
+        intent.putExtra("Long", locationNow.getLongitude());
+        intent.putExtra("UserName", userName);
         startActivity(intent);
     }
 
     public void onCreateChatClick (View view) {
-        currentTime = Calendar.getInstance().getTime();
-        reference.push().setValue(new ChatModel(userName, "test", currentTime, locationNow.getLatitude(), locationNow.getLongitude()));
-        System.out.println(reference.getKey());
+        Intent intent = new Intent(MainActivity.this, CreateActivity.class);
+        intent.putExtra("Lat", locationNow.getLatitude());
+        intent.putExtra("Long", locationNow.getLongitude());
+        intent.putExtra("UserName", userName);
+        startActivity(intent);
+//        currentTime = Calendar.getInstance().getTime();
+//        reference.push().setValue(new ChatModel(userName, "test", currentTime, locationNow.getLatitude(), locationNow.getLongitude()));
+//        System.out.println(reference.getKey());
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

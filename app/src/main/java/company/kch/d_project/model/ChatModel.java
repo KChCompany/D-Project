@@ -7,7 +7,6 @@ public class ChatModel {
     public Date dateTime;
     public double latitude, longitude;
 
-
     public ChatModel(){};
 
     public ChatModel(String creator, String chatName, Date dateTime, double latitude, double longitude) {
@@ -17,5 +16,4 @@ public class ChatModel {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
 }

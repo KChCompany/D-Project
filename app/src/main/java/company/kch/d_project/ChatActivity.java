@@ -1,5 +1,6 @@
 package company.kch.d_project;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toolbar;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,9 +28,7 @@ import company.kch.d_project.model.MessageModel;
 
 public class ChatActivity extends AppCompatActivity {
 
-    public static final String USER_NAME = "userName";
-    public static final String LATITUD = "Latitud";
-    public static final String LONGITUDE = "Longitude";
+    public static final String USER_NAME = "UserName";
 
     RecyclerView recyclerView;
     DatabaseReference reference;
@@ -57,11 +57,9 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new MessageAdapter(result);
         recyclerView.setAdapter(adapter);
 
-        latitude = getIntent().getDoubleExtra(LATITUD, 0);
-        longitude = getIntent().getDoubleExtra(LONGITUDE, 0);
         userName = getIntent().getStringExtra(USER_NAME);
 
-        reference = FirebaseDatabase.getInstance().getReference("chats").child("-LCxoB5UrxAK5EHFhyi1");
+        reference = FirebaseDatabase.getInstance().getReference("chats").child(getIntent().getStringExtra("chatID")).child("messages");
         final EditText editText = findViewById(R.id.editText);
         FloatingActionButton sendButton = findViewById(R.id.sendFAB);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +67,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editText.getText().toString().equals("")) {
                     currentTime = Calendar.getInstance().getTime();
-                    reference.push().setValue(new MessageModel(userName, editText.getText().toString(), currentTime, latitude, longitude, reference.push().getKey()));
+                    reference.push().setValue(new MessageModel(userName, editText.getText().toString(), currentTime, reference.push().getKey()));
                     editText.setText("");
                 }
             }
@@ -81,24 +79,15 @@ public class ChatActivity extends AppCompatActivity {
                 MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
 
                 assert messageModel != null;
-                double latDiff = latitude - messageModel.latitude;
-                double longDiff = longitude - messageModel.longitude;
 
-                boolean latDiffRange = -0.01 < latDiff && latDiff < 0.01;
-                boolean longDiffRange = -0.02 < longDiff && longDiff < 0.02;
-                float[] testResults = new float[1];
-                Location.distanceBetween(latitude, longitude, messageModel.latitude, messageModel.longitude, testResults);
-                System.out.println(testResults[0]);
-                if ((Calendar.getInstance().getTimeInMillis() - messageModel.time.getTime()) > 3600000) {
-                    reference.child(dataSnapshot.getKey()).removeValue();
-                } else if (latDiffRange && longDiffRange) {
+                if ((Calendar.getInstance().getTimeInMillis() - messageModel.time.getTime()) > 86400000) {
+                    //reference.child(dataSnapshot.getKey()).removeValue();
+                } else {
                     result.add(dataSnapshot.getValue(MessageModel.class));
                     resultKey.add(dataSnapshot.getKey());
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(result.size() - 1);
                 }
-
-
             }
 
             @Override
@@ -154,4 +143,11 @@ public class ChatActivity extends AppCompatActivity {
         }
         return index;
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
 }
